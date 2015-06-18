@@ -27,7 +27,6 @@ def new_import(filename, name=None, byblock=True, threshold=1):
                                     name=name)
 
     blocklist = original.connected_components()
-
     print("This map has {} block(s). \n".format(len(blocklist)))
 
     plt.figure()
@@ -71,7 +70,7 @@ def run_once(blocklist):
 if __name__ == "__main__":
 
     # SINGLE SMALL BLOCK
-    filename = "data/epworth_demo"
+    filename = "Data/Epworth_demo"
     name = "ep single"
     byblock = True
     threshold = 0.5

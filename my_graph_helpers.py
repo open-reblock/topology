@@ -522,7 +522,7 @@ def build_all_roads(myG, master=None, alpha=2, plot_intermediate=False,
 
     md = 100
 
-    while myG.interior_parcels:
+    while myG.interior_parcels:#########may be used to extract steps as geoJson
 
         result, depth = form_equivalence_classes(myG)
 
