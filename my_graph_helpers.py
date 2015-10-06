@@ -1016,8 +1016,6 @@ def import_and_setup(filename, threshold=1, component=None,
     original map.
     """
 
-    plt.close('all')
-
     # check that rezero is an array of len(2)
     # check that threshold is a float
 
