@@ -6,6 +6,7 @@ import warnings
 import json
 import my_graph_helpers as mgh
 from lazy_property import lazy_property
+from matplotlib import pyplot as plt
 
 #import plotly.plotly as py
 #from plotly.graph_objs import *

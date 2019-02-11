@@ -25,9 +25,7 @@ def define_epworth_barriers(myG):
 
     return be+be2+be3
 
-
-if __name__ == "__main__":
-
+def main():
     filename = "data/Epworth_demo"
     place = "epworth"
 
@@ -47,3 +45,6 @@ if __name__ == "__main__":
 
     original.plot_roads()
     plt.show()
+
+if __name__ == "__main__":
+    main()

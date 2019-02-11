@@ -51,7 +51,10 @@ def run_once(blocklist):
     plt.figure()
 
     for original in blocklist:
+        print "defining roads"
         original.define_roads()
+
+        print "defining parcels"
         original.define_interior_parcels()
         if len(original.interior_parcels) > 0:
             block = original.copy()
@@ -69,13 +72,18 @@ def run_once(blocklist):
 
     return map_roads
 
+def ssb():
+    return main(filename = "data/epworth_demo", name = "ep single", byblock = True, threshold = 0.5)
 
-if __name__ == "__main__":
-
+def main(
+    filename  = "data/phule_nagar_v6",
+    name      = "phule", 
+    byblock   = False,
+    threshold = 0.5):
     # SINGLE SMALL BLOCK
-    # filename = "data/epworth_demo"
-    # name = "ep single"
-    # byblock = True
+    # filename = "data/epworth_demo",
+    # name = "ep single",
+    # byblock = True,
     # threshold = 0.5
 
     # MANY SMALL BLOCKS, epworth
@@ -87,10 +95,10 @@ if __name__ == "__main__":
 
     # MANY SMALL BLOCKS, Phule Nagar
     # some of the blocks here require a threshold of 0.5
-    filename = "data/phule_nagar_v6"
-    name = "phule"
-    byblock = False
-    threshold = 0.5
+    # filename = "data/phule_nagar_v6"
+    # name = "phule"
+    # byblock = False
+    # threshold = 0.5
 
     # ONE LARGE BLOCK
     # filename = "data/capetown"
@@ -98,8 +106,7 @@ if __name__ == "__main__":
     # byblock = False
     # threshold = 1
 
-    blocklist = new_import(filename, name, byblock=byblock,
-                           threshold=threshold)
+    blocklist = new_import(filename, name, byblock=byblock, threshold=threshold)
 
     g = blocklist[0]
 
@@ -108,3 +115,7 @@ if __name__ == "__main__":
     map_roads = run_once(blocklist)
 
     plt.show()
+    return (blocklist, ep_geojson, map_roads)
+
+if __name__ == "__main__":
+    ssb()
