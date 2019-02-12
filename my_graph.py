@@ -981,7 +981,7 @@ class MyGraph(object):
                       else 1 for e in self.myedges()]
 
         node_colors = ['blue' if n.road
-                       else 'green' if e.barrier
+                       else 'green' if n.barrier
                        else 'red' if n.interior
                        else 'black' for n in self.G.nodes()]
 
