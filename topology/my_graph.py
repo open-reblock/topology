@@ -1038,8 +1038,7 @@ class MyGraph(object):
             duals = stack
 
         if colors is None:
-            colors = ['grey', 'black', 'blue', 'purple', 'red', 'orange',
-                      'yellow']
+            colors = ['grey', 'black', 'blue', 'purple', 'red', 'orange', 'yellow']
         else:
             colors = colors
 
@@ -1071,19 +1070,4 @@ class MyGraph(object):
 
 
 if __name__ == "__main__":
-    master = mgh.testGraphLattice(4)
-
-    S0 = master.copy()
-
-    S0.define_roads()
-    S0.define_interior_parcels()
-
-    road_edge = S0.myedges()[1]
-
-    S0.add_road_segment(road_edge)
-
-    S0.define_interior_parcels()
-
-    mgh.test_dual(S0)
-
-    plt.show()
+    pass

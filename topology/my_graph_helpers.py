@@ -8,11 +8,7 @@ import itertools
 import operator
 from scipy.cluster.hierarchy import linkage, dendrogram
 import json
-
-# import plotly.plotly as ply
-# from plotly.graph_objs import *
-
-
+import logging 
 import my_graph as mg
 
 
@@ -855,143 +851,6 @@ def graphFromJSON(jsonobj):
 
     return new, edgelist
 
-####################
-# PLOTTING FUNCTIONS
-####################
-
-
-# ==============================================================================
-# def plot_cluster_mat(clustering_data, plotting_data, title, dmax,
-#                      plot_dendro=True):
-#     """from http://nbviewer.ipython.org/github/OxanaSachenkova/
-#     hclust-python/blob/master/hclust.ipynb  First input matrix is used to
-#     define clustering order, second is the data that is plotted."""
-#
-#     fig = plt.figure(figsize=(8, 8))
-#     # x ywidth height
-#
-#     ax1 = fig.add_axes([0.05, 0.1, 0.2, 0.6])
-#     Y = linkage(clustering_data, method='single')
-#     Z1 = dendrogram(Y, orientation='right')  # adding/removing the axes
-#     ax1.set_xticks([])
-#     # ax1.set_yticks([])
-#
-# # Compute and plot second dendrogram.
-#     ax2 = fig.add_axes([0.3, 0.75, 0.6, 0.1])
-#     Z2 = dendrogram(Y)
-#     # ax2.set_xticks([])
-#     ax2.set_yticks([])
-#
-#     # set up custom color map
-#     c = mcolors.ColorConverter().to_rgb
-#     seq = [c('navy'), c('mediumblue'), .1, c('mediumblue'),
-#            c('darkcyan'), .2, c('darkcyan'), c('darkgreen'), .3,
-#            c('darkgreen'), c('lawngreen'), .4,c('lawngreen'),c('yellow'),.5,
-#            c('yellow'), c('orange'), .7, c('orange'), c('red')]
-#     custommap = make_colormap(seq)
-#
-#     # Compute and plot the heatmap
-#     axmatrix = fig.add_axes([0.3, 0.1, 0.6, 0.6])
-#
-#     if not plot_dendro:
-#         fig = plt.figure(figsize=(8, 8))
-#         axmatrix = fig.add_axes([0.05, 0.1, 0.85, 0.8])
-#
-#     idx1 = Z1['leaves']
-#     D = mat_reorder(plotting_data, idx1)
-#     im = axmatrix.matshow(D, aspect='auto', origin='lower', cmap=custommap,
-#                           vmin=0, vmax=dmax)
-#     axmatrix.set_xticks([])
-#     axmatrix.set_yticks([])
-#
-#     # Plot colorbar.
-#     h = 0.6
-#     if not plot_dendro:
-#         h = 0.8
-#     axcolor = fig.add_axes([0.91, 0.1, 0.02, h])
-#     plt.colorbar(im, cax=axcolor)
-#     ax2.set_title(title)
-#     if not plot_dendro:
-#         axmatrix.set_title(title)
-#
-#
-# def make_colormap(seq):
-#     """Return a LinearSegmentedColormap
-#     seq: a sequence of floats and RGB-tuples. The floats should be increasing
-#     and in the interval (0,1).
-#     """
-#     seq = [(None,) * 3, 0.0] + list(seq) + [1.0, (None,) * 3]
-#     cdict = {'red': [], 'green': [], 'blue': []}
-#     for i, item in enumerate(seq):
-#         if isinstance(item, float):
-#             r1, g1, b1 = seq[i - 1]
-#             r2, g2, b2 = seq[i + 1]
-#             cdict['red'].append([item, r1, r2])
-#             cdict['green'].append([item, g1, g2])
-#             cdict['blue'].append([item, b1, b2])
-#     return mcolors.LinearSegmentedColormap('CustomMap', cdict)
-# ==============================================================================
-
-
-# ==============================================================================
-# def plotly_traces(myG):
-#     """myGraph to plotly trace   """
-#
-#     # add the edges as disconnected lines in a trace
-#     edge_trace = Scatter(x=[], y=[], mode='lines',
-#                          name='Parcel Boundaries',
-#                          line=Line(color='grey', width=0.5))
-#     road_trace = Scatter(x=[], y=[], mode='lines',
-#                          name='Road Boundaries',
-#                          line=Line(color='black', width=2))
-#     interior_trace = Scatter(x=[], y=[], mode='lines',
-#                              name='Interior Parcels',
-#                              line=Line(color='red', width=2.5))
-#     barrier_trace = Scatter(x=[], y=[], mode='lines',
-#                             name='Barriers',
-#                             line=Line(color='green', width=0.75))
-#
-#     for i in myG.connected_components():
-#         for edge in i.myedges():
-#             x0, y0 = edge.nodes[0].loc
-#             x1, y1 = edge.nodes[1].loc
-#             edge_trace['x'] += [x0, x1, None]
-#             edge_trace['y'] += [y0, y1, None]
-#             if edge.road:
-#                 road_trace['x'] += [x0, x1, None]
-#                 road_trace['y'] += [y0, y1, None]
-#             if edge.interior:
-#                 interior_trace['x'] += [x0, x1, None]
-#                 interior_trace['y'] += [y0, y1, None]
-#             if edge.barrier:
-#                 barrier_trace['x'] += [x0, x1, None]
-#                 barrier_trace['y'] += [y0, y1, None]
-#
-#     return [edge_trace, road_trace, interior_trace, barrier_trace]
-#
-#
-# def plotly_graph(traces, filename=None, title=None):
-#
-#     """ use ply.iplot(fig,filename) after this function in ipython notebok to
-#     show the resulting plotly figure inline, or url=ply.plot(fig,filename) to
-#     just get url of resulting fig and not plot inline. """
-#
-#     if filename is None:
-#         filename = "plotly_graph"
-#     fig = Figure(data=Data(traces),
-#                  layout=Layout(title=title, plot_bgcolor="rgb(217,217,217)",
-#                                showlegend=True,
-#                                xaxis=XAxis(showgrid=False, zeroline=False,
-#                                            showticklabels=False),
-#                                yaxis=YAxis(showgrid=False, zeroline=False,
-#                                            showticklabels=False)))
-#
-#     # ply.iplot(fig, filename=filename)
-#     # py.iplot(fig, filename=filename)
-#
-#     return fig, filename
-#
-# ==============================================================================
 
 ######################
 #  IMPORT & Running FUNCTIONS #
@@ -1009,7 +868,7 @@ def import_and_setup(filename, threshold=1, component=None,
     by number of nodes, where 0 is the largest) instead of all of the blocks in
     the map.
 
-    byblock = True runs the clean up geometery procedure on each original
+    byblock = True runs the clean up geometry procedure on each original
     block individually, rather than all the blocks together.  This makes the
     clean up process a lot faster for large numbers of blocks, but if there are
     pieces of a block that are supposed to be connected, but are not in the
@@ -1019,14 +878,17 @@ def import_and_setup(filename, threshold=1, component=None,
     # check that rezero is an array of len(2)
     # check that threshold is a float
 
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
     sf = shapefile.Reader(filename)
     myG1 = graphFromShapes(sf.shapes(), name, rezero)
 
-    print("shape file loaded")
+    logging.info("Shape file loaded: %s", filename)
 
     myG1 = myG1.clean_up_geometry(threshold, byblock)
 
-    print("geometery cleaned up")
+    logging.info("Geometry cleaned up (threshold: %s unit(s), byblock: %s)", threshold, byblock)
 
     xmin = min([n.x for n in myG1.G.nodes()])
     ymin = min([n.y for n in myG1.G.nodes()])
@@ -1035,6 +897,8 @@ def import_and_setup(filename, threshold=1, component=None,
 
     myG2 = rescale_mygraph(myG1, rezero=rezero_vector)
     myG2.rezero_vector = rezero_vector
+
+    logging.info("Map has %s blocks", len(myG2.connected_components()))
 
     if component is None:
         return myG2
@@ -1276,6 +1140,7 @@ def build_lattice_barrier(myG):
 
 
 if __name__ == "__main__":
+    print testmat()
     master = testGraphLattice(7)
     master.name = "Lat_0"
     master.define_roads()
