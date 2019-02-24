@@ -73,7 +73,7 @@ class MyNode(object):
     """ rounds float nodes to (2!) decimal places, defines equality """
 
     def __init__(self, locarray, name=None):
-        significant_figs = 2
+        significant_figs = 4
         if len(locarray) != 2:
             print("error")
         x = locarray[0]
@@ -323,7 +323,6 @@ class MyGraph(object):
 ############################
 
     def __combine_near_nodes(self, threshold):
-
         """takes a connected component MyGraph, finds all nodes that are
         within a threshold distance of each other, drops one and keeps the
         other, and reconnects all the nodes that were connected to the first
@@ -332,7 +331,8 @@ class MyGraph(object):
         nlist = self.G.nodes()
         for i, j in itertools.combinations(nlist, 2):
             if j in self.G and i in self.G:
-                if mgh.distance_squared(i, j) < threshold**2:
+                d = mgh.distance_squared(i, j)
+                if d < threshold**2:
                     drop = j
                     keep = i
                     neighbors_drop = self.G.neighbors(drop)
@@ -402,11 +402,11 @@ class MyGraph(object):
         return dropped_edges
 
     def clean_up_geometry(self, threshold, byblock=True):
-
         """ function cleans up geometry, and returns a _copy_  of the graph,
         cleaned up nicely. Does not change original graph. connected considers
         graph by connected components only for clean up.
         """
+        print "num nodes before cleanup", self.G.number_of_nodes()
 
         Gs = []
         if byblock:
@@ -427,7 +427,9 @@ class MyGraph(object):
         nxG = nx.compose_all(Gs)
         newG = MyGraph(nxG, name=self.name)
         newG.cleaned = True
-
+        
+        print "num nodes after cleanup",  newG.G.number_of_nodes()
+        
         return newG
 
     def clean_up_geometry_single_CC(self, threshold):
@@ -807,6 +809,9 @@ class MyGraph(object):
         length = sum([e.length for e in eroad])
         return length
 
+    def interior_length(self):
+        """finds total length of roads in self """
+        return sum(e.length for e in self.myedges() if e.interior)
 
 #############################################
 #   GEOMETRY AROUND BUILDING A GIVEN ROAD SEGMENT - c/(sh?)ould be deleted.
@@ -959,7 +964,7 @@ class MyGraph(object):
 
     def plot_roads(self, master=None, update=False, parcel_labels=False,
                    title="", new_plot=True, new_road_color="blue",
-                   new_road_width=4, old_node_size=25, old_road_width=6,
+                   new_road_width=1, old_node_size=25, old_road_width=0.5,
                    barriers=True, base_width=1):
 
         nlocs = self.location_dict()
@@ -971,30 +976,38 @@ class MyGraph(object):
         if new_plot:
             plt.figure()
 
-        edge_colors = ['blue' if e.road
+        # edge_colors = ['blue' if e.road
+        edge_colors = ['#9b9b9b' if e.road
                        else 'green' if e.barrier
-                       else 'red' if e.interior
-                       else 'black' for e in self.myedges()]
+                       # else '#4c4c9d' if n.interior
+                       # else '#a4b3ff' if e.interior
+                       else '#33658a' if e.interior
+                       else '#444444' for e in self.myedges()]
 
-        edge_width = [new_road_width if e.road
-                      else 0.7*new_road_width if e.barrier
-                      else 0.7*new_road_width if e.interior
+        edge_width = [1*new_road_width if e.barrier
+                      else 4*new_road_width if e.interior
                       else 1 for e in self.myedges()]
 
-        node_colors = ['blue' if n.road
+        # node_colors = ['blue' if n.road
+        node_colors = ['#9b9b9b' if n.road
                        else 'green' if n.barrier
-                       else 'red' if n.interior
-                       else 'black' for n in self.G.nodes()]
+                       # else '#4c4c9d' if n.interior
+                       # else '#a4b3ff' if n.interior
+                       else '#33658a' if n.interior
+                       else '#444444' for n in self.G.nodes()]
 
-        node_sizes = [new_road_width**1.8 if n.road
-                      else new_road_width**1.4 if n.barrier
-                      else new_road_width**1.4 if n.interior
+        # node_sizes = [new_road_width**1.8 if n.road
+        #               else new_road_width**1.4 if n.barrier
+        #               else new_road_width**1.4 if n.interior
+        #               else 0.5 for n in self.G.nodes()]
+        node_sizes = [     new_road_width**1.4 if n.barrier
+                      else new_road_width*4 if n.interior
                       else 0.5 for n in self.G.nodes()]
 
         # plot current graph
-        # nx.draw_networkx(self.G, pos=nlocs, with_labels=False,
-        #                  node_size=node_sizes, node_color=node_colors,
-        #                  edge_color=edge_colors, width=edge_width)
+        nx.draw_networkx(self.G, pos=nlocs, with_labels=False,
+                         node_size=node_sizes, node_color=node_colors,
+                         edge_color=edge_colors, width=edge_width, linewidths=None, markeredgewidth=0)
 
         # plot original roads
         if master:
@@ -1006,9 +1019,9 @@ class MyGraph(object):
             for e in eoffroad:
                 copy.G.remove_edge(e.nodes[0], e.nodes[1])
 
-            # nx.draw_networkx(copy.G, pos=nlocs, with_labels=False,
-            #                  node_size=old_node_size, node_color='black',
-            #                  edge_color='black', width=old_road_width)
+            nx.draw_networkx(copy.G, pos=nlocs, with_labels=False,
+                             node_size=old_node_size, node_color='black',
+                             edge_color='black', width=old_road_width)
 
     def plot_all_paths(self, all_paths, update=False):
         """ plots the shortest paths from all interior parcels to the road.
@@ -1029,7 +1042,7 @@ class MyGraph(object):
             myGpaths.plot(edge_color='purple', width=6, node_size=1)
 
     def plot_weak_duals(self, stack=None, colors=None, width=None,
-                        node_size=None):
+                        node_size=None, new_figure=True):
         """Given a list of weak dual graphs, plots them all. Has default colors
         node size, and line widths, but these can be added as lists."""
 
@@ -1058,7 +1071,8 @@ class MyGraph(object):
             warnings.warn("too many dual graphs to draw. simplify fig," +
                           " or add more colors")
 
-        plt.figure()
+        if new_figure:
+            plt.figure()
 
         for i in range(0, len(duals)):
             for j in duals[i]:
@@ -1066,9 +1080,9 @@ class MyGraph(object):
                        edge_color=colors[i], width=width[i])
                 # print "color = {0}, node_size = {1}, width = {2}".format(
                 #       colors[i], node_size[i], width[i])
-
-        plt.axes().set_aspect(aspect=1)
-        plt.axis('off')
+        if new_figure:
+            plt.axes().set_aspect(aspect=1)
+            plt.axis('off')
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from timeit import default_timer as timer
 
 import my_graph_helpers as mgh
 
@@ -75,6 +76,23 @@ def run_once(blocklist):
 def ssb():
     return main(filename = "data/epworth_demo", name = "ep single", byblock = True, threshold = 0.5)
 
+def westpoint(threshold = 1):
+    start = timer()
+    results = main(filename = "data/private/WestpointEnumerationShapefile", 
+        name = "westpoint", 
+        byblock = True, 
+        threshold = threshold) 
+    end = timer()
+    print "time taken", end - start
+    return results
+
+def epworth_before():
+    return main(
+        filename = "data/epworth_before",
+        name = "ep many",
+        byblock = True,
+        threshold = 0.5)
+
 def main(
     filename  = "data/phule_nagar_v6",
     name      = "phule", 
@@ -110,12 +128,12 @@ def main(
 
     g = blocklist[0]
 
-    ep_geojson = g.myedges_geoJSON()
+    geojson = g.myedges_geoJSON()
 
     map_roads = run_once(blocklist)
 
-    plt.show()
-    return (blocklist, ep_geojson, map_roads)
+    # plt.show()
+    return (blocklist, geojson, map_roads)
 
 if __name__ == "__main__":
-    ssb()
+    pass

@@ -9,6 +9,8 @@ import operator
 from scipy.cluster.hierarchy import linkage, dendrogram
 import json
 
+from matplotlib import pyplot as plt
+
 # import plotly.plotly as ply
 # from plotly.graph_objs import *
 
@@ -747,6 +749,7 @@ def graphFromMyFaces(flist, name=None):
 
 
 def graphFromShapes(shapes, name, rezero=np.array([0, 0])):
+    print len(shapes)
     nodedict = dict()
     plist = []
     for s in shapes:
@@ -1020,6 +1023,14 @@ def import_and_setup(filename, threshold=1, component=None,
     # check that threshold is a float
 
     sf = shapefile.Reader(filename)
+    # print filename
+    # print len(sf.shapes())
+    # for shape in sf.shapeRecords():
+    #     x = [i[0] for i in shape.shape.points[:]]
+    #     y = [i[1] for i in shape.shape.points[:]]
+    #     plt.plot(x, y)
+    # plt.show()
+    # plt.savefig('shapes.png')
     myG1 = graphFromShapes(sf.shapes(), name, rezero)
 
     print("shape file loaded")
