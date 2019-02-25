@@ -1,10 +1,10 @@
 from matplotlib import pyplot as plt
 
-import my_graph_helpers as mgh
+from graph import my_graph_helpers as mgh
 
 """
 This example file demonstrates how to import a shapefile, finding and
- plotting the shortest distance of roads necessary to acheive universal road
+ plotting the shortest distance of roads necessary to achieve universal road
  access for all parcels.
 
 The shortest distance of roads algorithm is based on probablistic greedy search
@@ -28,12 +28,10 @@ def new_import(filename, name=None, byblock=True, threshold=1):
 
     blocklist = original.connected_components()
 
-    print("This map has {} block(s). \n".format(len(blocklist)))
-
     plt.figure()
     # plot the full original map
     for b in blocklist:
-        # defines original geometery as a side effect,
+        # defines original geometry as a side effect,
         b.plot_roads(master=b, new_plot=False, update=True)
 
     blocklist.sort(key=lambda b: len(b.interior_parcels), reverse=True)
@@ -70,41 +68,44 @@ def run_once(blocklist):
     return map_roads
 
 
-if __name__ == "__main__":
-
-    # SINGLE SMALL BLOCK
-    # filename = "data/epworth_demo"
-    # name = "ep single"
-    # byblock = True
-    # threshold = 0.5
-
-    # MANY SMALL BLOCKS, epworth
-    # some of the blocks here require a threshold of 0.5
-    # filename = "data/epworth_before"
-    # name = "ep many"
-    # byblock = True
-    # threshold = 0.5
-
-    # MANY SMALL BLOCKS, Phule Nagar
-    # some of the blocks here require a threshold of 0.5
-    filename = "data/phule_nagar_v6"
-    name = "phule"
-    byblock = False
-    threshold = 0.5
-
-    # ONE LARGE BLOCK
-    # filename = "data/capetown"
-    # name = "cape"
-    # byblock = False
-    # threshold = 1
-
-    blocklist = new_import(filename, name, byblock=byblock,
-                           threshold=threshold)
-
-    g = blocklist[0]
-
-    ep_geojson = g.myedges_geoJSON()
-
+def main(filename, name, byblock, threshold):
+    blocklist = new_import(filename, name, byblock=byblock, threshold=threshold)
+    geojson = blocklist[0].myedges_geoJSON()
     map_roads = run_once(blocklist)
 
     plt.show()
+
+    return (blocklist, geojson, map_roads)
+
+if __name__ == "__main__":
+    # SINGLE SMALL BLOCK
+    # main(
+    #     filename  = "data/epworth_demo", 
+    #     name      = "ep single",
+    #     byblock   = True,
+    #     threshold = 0.5)
+
+    # MANY SMALL BLOCKS, epworth
+    # some of the blocks here require a threshold of 0.5
+    # main(
+    #     filename  = "data/epworth_before",
+    #     name      = "ep many",
+    #     byblock   = True,
+    #     threshold = 0.5)
+
+    # MANY SMALL BLOCKS, Phule Nagar
+    # some of the blocks here require a threshold of 0.5
+    main(
+        filename  = "data/phule_nagar_v6",
+        name      = "phule",
+        byblock   = False,
+        threshold = 0.5)
+
+    # ONE LARGE BLOCK
+    # main(
+    #     filename = "data/capetown",
+    #     name = "cape",
+    #     byblock = False,
+    #     threshold = 1)
+
+

@@ -6,9 +6,7 @@ import warnings
 import json
 import my_graph_helpers as mgh
 from lazy_property import lazy_property
-
-#import plotly.plotly as py
-#from plotly.graph_objs import *
+from matplotlib import pyplot as plt
 
 
 """
@@ -308,7 +306,7 @@ class MyGraph(object):
 
     @lazy_property
     def inner_facelist(self):
-        inner_facelist = self.__trace_faces()
+        inner_facelist = self.trace_faces()
         # print "inner_facelist called for graph {}".format(self)
         return inner_facelist
 
@@ -466,7 +464,7 @@ class MyGraph(object):
             emb[i] = reorder_neighbors
         return emb
 
-    def __trace_faces(self):
+    def trace_faces(self):
         """Algorithm from SAGE"""
         if len(self.G.nodes()) < 2:
             inner_facelist = []
@@ -661,7 +659,7 @@ class MyGraph(object):
                 try:
                     g.inner_facelist
                 except AttributeError:
-                    g.__trace_faces()
+                    g.trace_faces()
                     print("tracing faces needed")
 
         return stacks
@@ -1038,8 +1036,7 @@ class MyGraph(object):
             duals = stack
 
         if colors is None:
-            colors = ['grey', 'black', 'blue', 'purple', 'red', 'orange',
-                      'yellow']
+            colors = ['grey', 'black', 'blue', 'purple', 'red', 'orange', 'yellow']
         else:
             colors = colors
 
@@ -1071,19 +1068,4 @@ class MyGraph(object):
 
 
 if __name__ == "__main__":
-    master = mgh.testGraphLattice(4)
-
-    S0 = master.copy()
-
-    S0.define_roads()
-    S0.define_interior_parcels()
-
-    road_edge = S0.myedges()[1]
-
-    S0.add_road_segment(road_edge)
-
-    S0.define_interior_parcels()
-
-    mgh.test_dual(S0)
-
-    plt.show()
+    pass

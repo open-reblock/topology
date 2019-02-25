@@ -8,11 +8,7 @@ import itertools
 import operator
 from scipy.cluster.hierarchy import linkage, dendrogram
 import json
-
-# import plotly.plotly as ply
-# from plotly.graph_objs import *
-
-
+import logging 
 import my_graph as mg
 
 
@@ -160,7 +156,7 @@ def bisect_angle(a, b, c, epsilon=0.2, radius=1):
 
 
 def find_negative(d, b):
-    """finds the vector -d when b is origen """
+    """finds the vector -d when b is origin """
     negx = -1*(d.x - b.x) + b.x
     negy = -1*(d.y - b.y) + b.y
     dneg = mg.MyNode((negx, negy))
@@ -855,143 +851,6 @@ def graphFromJSON(jsonobj):
 
     return new, edgelist
 
-####################
-# PLOTTING FUNCTIONS
-####################
-
-
-# ==============================================================================
-# def plot_cluster_mat(clustering_data, plotting_data, title, dmax,
-#                      plot_dendro=True):
-#     """from http://nbviewer.ipython.org/github/OxanaSachenkova/
-#     hclust-python/blob/master/hclust.ipynb  First input matrix is used to
-#     define clustering order, second is the data that is plotted."""
-#
-#     fig = plt.figure(figsize=(8, 8))
-#     # x ywidth height
-#
-#     ax1 = fig.add_axes([0.05, 0.1, 0.2, 0.6])
-#     Y = linkage(clustering_data, method='single')
-#     Z1 = dendrogram(Y, orientation='right')  # adding/removing the axes
-#     ax1.set_xticks([])
-#     # ax1.set_yticks([])
-#
-# # Compute and plot second dendrogram.
-#     ax2 = fig.add_axes([0.3, 0.75, 0.6, 0.1])
-#     Z2 = dendrogram(Y)
-#     # ax2.set_xticks([])
-#     ax2.set_yticks([])
-#
-#     # set up custom color map
-#     c = mcolors.ColorConverter().to_rgb
-#     seq = [c('navy'), c('mediumblue'), .1, c('mediumblue'),
-#            c('darkcyan'), .2, c('darkcyan'), c('darkgreen'), .3,
-#            c('darkgreen'), c('lawngreen'), .4,c('lawngreen'),c('yellow'),.5,
-#            c('yellow'), c('orange'), .7, c('orange'), c('red')]
-#     custommap = make_colormap(seq)
-#
-#     # Compute and plot the heatmap
-#     axmatrix = fig.add_axes([0.3, 0.1, 0.6, 0.6])
-#
-#     if not plot_dendro:
-#         fig = plt.figure(figsize=(8, 8))
-#         axmatrix = fig.add_axes([0.05, 0.1, 0.85, 0.8])
-#
-#     idx1 = Z1['leaves']
-#     D = mat_reorder(plotting_data, idx1)
-#     im = axmatrix.matshow(D, aspect='auto', origin='lower', cmap=custommap,
-#                           vmin=0, vmax=dmax)
-#     axmatrix.set_xticks([])
-#     axmatrix.set_yticks([])
-#
-#     # Plot colorbar.
-#     h = 0.6
-#     if not plot_dendro:
-#         h = 0.8
-#     axcolor = fig.add_axes([0.91, 0.1, 0.02, h])
-#     plt.colorbar(im, cax=axcolor)
-#     ax2.set_title(title)
-#     if not plot_dendro:
-#         axmatrix.set_title(title)
-#
-#
-# def make_colormap(seq):
-#     """Return a LinearSegmentedColormap
-#     seq: a sequence of floats and RGB-tuples. The floats should be increasing
-#     and in the interval (0,1).
-#     """
-#     seq = [(None,) * 3, 0.0] + list(seq) + [1.0, (None,) * 3]
-#     cdict = {'red': [], 'green': [], 'blue': []}
-#     for i, item in enumerate(seq):
-#         if isinstance(item, float):
-#             r1, g1, b1 = seq[i - 1]
-#             r2, g2, b2 = seq[i + 1]
-#             cdict['red'].append([item, r1, r2])
-#             cdict['green'].append([item, g1, g2])
-#             cdict['blue'].append([item, b1, b2])
-#     return mcolors.LinearSegmentedColormap('CustomMap', cdict)
-# ==============================================================================
-
-
-# ==============================================================================
-# def plotly_traces(myG):
-#     """myGraph to plotly trace   """
-#
-#     # add the edges as disconnected lines in a trace
-#     edge_trace = Scatter(x=[], y=[], mode='lines',
-#                          name='Parcel Boundaries',
-#                          line=Line(color='grey', width=0.5))
-#     road_trace = Scatter(x=[], y=[], mode='lines',
-#                          name='Road Boundaries',
-#                          line=Line(color='black', width=2))
-#     interior_trace = Scatter(x=[], y=[], mode='lines',
-#                              name='Interior Parcels',
-#                              line=Line(color='red', width=2.5))
-#     barrier_trace = Scatter(x=[], y=[], mode='lines',
-#                             name='Barriers',
-#                             line=Line(color='green', width=0.75))
-#
-#     for i in myG.connected_components():
-#         for edge in i.myedges():
-#             x0, y0 = edge.nodes[0].loc
-#             x1, y1 = edge.nodes[1].loc
-#             edge_trace['x'] += [x0, x1, None]
-#             edge_trace['y'] += [y0, y1, None]
-#             if edge.road:
-#                 road_trace['x'] += [x0, x1, None]
-#                 road_trace['y'] += [y0, y1, None]
-#             if edge.interior:
-#                 interior_trace['x'] += [x0, x1, None]
-#                 interior_trace['y'] += [y0, y1, None]
-#             if edge.barrier:
-#                 barrier_trace['x'] += [x0, x1, None]
-#                 barrier_trace['y'] += [y0, y1, None]
-#
-#     return [edge_trace, road_trace, interior_trace, barrier_trace]
-#
-#
-# def plotly_graph(traces, filename=None, title=None):
-#
-#     """ use ply.iplot(fig,filename) after this function in ipython notebok to
-#     show the resulting plotly figure inline, or url=ply.plot(fig,filename) to
-#     just get url of resulting fig and not plot inline. """
-#
-#     if filename is None:
-#         filename = "plotly_graph"
-#     fig = Figure(data=Data(traces),
-#                  layout=Layout(title=title, plot_bgcolor="rgb(217,217,217)",
-#                                showlegend=True,
-#                                xaxis=XAxis(showgrid=False, zeroline=False,
-#                                            showticklabels=False),
-#                                yaxis=YAxis(showgrid=False, zeroline=False,
-#                                            showticklabels=False)))
-#
-#     # ply.iplot(fig, filename=filename)
-#     # py.iplot(fig, filename=filename)
-#
-#     return fig, filename
-#
-# ==============================================================================
 
 ######################
 #  IMPORT & Running FUNCTIONS #
@@ -1009,7 +868,7 @@ def import_and_setup(filename, threshold=1, component=None,
     by number of nodes, where 0 is the largest) instead of all of the blocks in
     the map.
 
-    byblock = True runs the clean up geometery procedure on each original
+    byblock = True runs the clean up geometry procedure on each original
     block individually, rather than all the blocks together.  This makes the
     clean up process a lot faster for large numbers of blocks, but if there are
     pieces of a block that are supposed to be connected, but are not in the
@@ -1019,14 +878,17 @@ def import_and_setup(filename, threshold=1, component=None,
     # check that rezero is an array of len(2)
     # check that threshold is a float
 
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
     sf = shapefile.Reader(filename)
     myG1 = graphFromShapes(sf.shapes(), name, rezero)
 
-    print("shape file loaded")
+    logging.info("Shape file loaded: %s", filename)
 
     myG1 = myG1.clean_up_geometry(threshold, byblock)
 
-    print("geometery cleaned up")
+    logging.info("Geometry cleaned up (threshold: %s unit(s), byblock: %s)", threshold, byblock)
 
     xmin = min([n.x for n in myG1.G.nodes()])
     ymin = min([n.y for n in myG1.G.nodes()])
@@ -1035,6 +897,8 @@ def import_and_setup(filename, threshold=1, component=None,
 
     myG2 = rescale_mygraph(myG1, rezero=rezero_vector)
     myG2.rezero_vector = rezero_vector
+
+    logging.info("Map has %s blocks", len(myG2.connected_components()))
 
     if component is None:
         return myG2
@@ -1070,197 +934,6 @@ def build_barriers(barriers):
             n.barrier = True
             n.road = False
 
-####################
-# Testing functions
-###################
-
-
-def test_edges_equality():
-    """checks that myGraph points to myEdges correctly   """
-    testG = testGraph()
-    testG.trace_faces()
-    outerE = list(testG.outerface.edges)[0]
-    return outerE is testG.G[outerE.nodes[0]][outerE.nodes[1]]['myedge']
-
-
-def test_dual(myG):
-    """ plots the weak duals based on testGraph"""
-
-    S0 = myG.weak_dual()
-
-    myG.plot_roads(update=False)
-    S0.plot(node_color='g', edge_color='g', width=3)
-
-
-def test_nodes(n1, n2):
-    """ returns true if two nodes are evaluated as the same"""
-    eq_num = len(set(n1).intersection(set(n2)))
-    is_num = len(set([id(n) for n in n1])
-                 .intersection(set([id(n) for n in n2])))
-    print("is eq? ", eq_num, "is is? ", is_num)
-
-
-def test_interior_is_inner(myG):
-    myG.inner_facelist
-    myG.interior_parcels
-    in0 = myG.interior_parcels[0]
-    ans = in0 in myG.inner_facelist
-
-    # print("interior in inner_facelist is {}".format(ans))
-
-    return ans
-
-
-def testGraph():
-    n = {}
-    n[1] = mg.MyNode((0, 0))
-    n[2] = mg.MyNode((0, 1))
-    n[3] = mg.MyNode((0, 2))
-    n[4] = mg.MyNode((0, 3))
-    n[5] = mg.MyNode((1, 2))
-    n[6] = mg.MyNode((1, 3))
-    n[7] = mg.MyNode((0, 4))
-    n[8] = mg.MyNode((-1, 4))
-    n[9] = mg.MyNode((-1, 3))
-    n[10] = mg.MyNode((-1, 2))
-    n[11] = mg.MyNode((1, 4))
-    n[12] = mg.MyNode((-2, 3))
-
-    lat = mg.MyGraph(name="S0")
-    lat.add_edge(mg.MyEdge((n[1], n[2])))
-    lat.add_edge(mg.MyEdge((n[2], n[3])))
-    lat.add_edge(mg.MyEdge((n[2], n[5])))
-    lat.add_edge(mg.MyEdge((n[3], n[4])))
-    lat.add_edge(mg.MyEdge((n[3], n[5])))
-    lat.add_edge(mg.MyEdge((n[3], n[9])))
-    lat.add_edge(mg.MyEdge((n[4], n[5])))
-    lat.add_edge(mg.MyEdge((n[4], n[6])))
-    lat.add_edge(mg.MyEdge((n[4], n[7])))
-    lat.add_edge(mg.MyEdge((n[4], n[8])))
-    lat.add_edge(mg.MyEdge((n[4], n[9])))
-    lat.add_edge(mg.MyEdge((n[5], n[6])))
-    lat.add_edge(mg.MyEdge((n[6], n[7])))
-    lat.add_edge(mg.MyEdge((n[7], n[8])))
-    lat.add_edge(mg.MyEdge((n[8], n[9])))
-    lat.add_edge(mg.MyEdge((n[9], n[10])))
-    lat.add_edge(mg.MyEdge((n[3], n[10])))
-    lat.add_edge(mg.MyEdge((n[2], n[10])))
-    lat.add_edge(mg.MyEdge((n[7], n[11])))
-    lat.add_edge(mg.MyEdge((n[6], n[11])))
-    lat.add_edge(mg.MyEdge((n[10], n[12])))
-    lat.add_edge(mg.MyEdge((n[8], n[12])))
-
-    return lat
-
-
-def testGraphLattice(n, xshift=0, yshift=0, scale=1):
-    """returns a square lattice of dimension nxn   """
-    nodelist = {}
-    for j in range(0, n**2):
-        x = (math.fmod(j, n))*scale + xshift
-        y = (math.floor(j/n))*scale + yshift
-        nodelist[j] = mg.MyNode((x, y))
-
-    edgelist = defaultdict(list)
-
-    for i in nodelist.keys():
-        ni = nodelist[i]
-        for j in nodelist.keys():
-            nj = nodelist[j]
-            if ni != nj:
-                if distance(ni, nj) == scale:
-                    edgelist[ni].append(nj)
-
-    myedgelist = []
-
-    for n1 in edgelist.keys():
-        n2s = edgelist[n1]
-        for n2 in n2s:
-            myedgelist.append(mg.MyEdge((n1, n2)))
-
-    lattice = graphFromMyEdges(myedgelist)
-    lattice.name = "lattice"
-
-    return lattice
-
-
-def testGraphEquality():
-    n = {}
-    n[1] = mg.MyNode((0, 0))
-    n[2] = mg.MyNode((0, 1))
-    n[3] = mg.MyNode((1, 1))
-    n[4] = mg.MyNode((1, 0))
-    n[5] = mg.MyNode((0, 0))  # actually equal
-    n[6] = mg.MyNode((0.0001, 0.0001))  # within rounding
-    n[7] = mg.MyNode((0.1, 0.1))  # within threshold
-    n[8] = mg.MyNode((0.3, 0.3))  # actually different
-
-    G = mg.MyGraph(name="S0")
-    G.add_edge(mg.MyEdge((n[1], n[2])))
-    G.add_edge(mg.MyEdge((n[2], n[3])))
-    G.add_edge(mg.MyEdge((n[3], n[4])))
-    G.add_edge(mg.MyEdge((n[4], n[5])))
-    G.add_edge(mg.MyEdge((n[5], n[6])))
-    G.add_edge(mg.MyEdge((n[6], n[7])))
-    G.add_edge(mg.MyEdge((n[7], n[8])))
-
-    return G, n
-
-
-def json_test(test_geojson):
-    """  If the good geoJSON request does not show an OK status message, the
-    validation server is down.  """
-
-    validate_endpoint = 'http://geojsonlint.com/validate'
-    good_geojson = '{"type": "Point", "coordinates": [-100, 80]}'
-    good_request = requests.post(validate_endpoint, data=good_geojson)
-    test_request = requests.post(validate_endpoint, data=test_geojson)
-
-    print("hard coded good geoJSON:")
-    print(good_request.json())
-    print("status for test geojson:")
-    print(test_request.json())
-
-
-def __centroid_test():
-    n = {}
-    n[1] = mg.MyNode((0, 0))
-    n[2] = mg.MyNode((0, 1))
-    n[3] = mg.MyNode((1, 1))
-    n[4] = mg.MyNode((1, 0))
-    n[5] = mg.MyNode((0.55, 0))
-    n[6] = mg.MyNode((0.5, 0.9))
-    n[7] = mg.MyNode((0.45, 0))
-    n[8] = mg.MyNode((0.4, 0))
-    n[9] = mg.MyNode((0.35, 0))
-    n[10] = mg.MyNode((0.3, 0))
-    n[11] = mg.MyNode((0.25, 0))
-    nodeorder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1]
-    nodetups = [(n[nodeorder[i]], n[nodeorder[i+1]])
-                for i in range(0, len(nodeorder)-1)]
-    edgelist = [mg.MyEdge(i) for i in nodetups]
-
-    f1 = mg.MyFace(nodetups)
-    S0 = graphFromMyFaces([f1])
-
-    S0.define_roads()
-    S0.define_interior_parcels()
-
-    S0.plot_roads(parcel_labels=True)
-
-    return S0, f1, n, edgelist
-
-
-def testmat():
-    testmat = []
-    dim = 4
-    for i in range(0, dim):
-        k = []
-        for j in range(0, dim):
-            k.append((i-j)*(i-j))
-        testmat.append(k)
-    return testmat
-
 
 def build_lattice_barrier(myG):
     edgesub = [e for e in myG.myedges()
@@ -1273,35 +946,3 @@ def build_lattice_barrier(myG):
 
     myG.define_interior_parcels()
     return myG, edgesub
-
-
-if __name__ == "__main__":
-    master = testGraphLattice(7)
-    master.name = "Lat_0"
-    master.define_roads()
-    master.define_interior_parcels()
-    # S0, barrier_edges = build_lattice_barrier(S0)
-    # barGraph = graphFromMyEdges(barrier_edges)
-    S0 = master.copy()
-
-    # S0.plot_roads(master, update=False, new_plot=True)
-
-    test_dual(S0)
-
-    S0 = master.copy()
-    new_roads_i = build_all_roads(S0, master, alpha=2, wholepath=True,
-                                  barriers=False, plot_intermediate=False,
-                                  strict_greedy=True, vquiet=True,
-                                  outsidein=True)
-
-    S0.plot_roads()
-    print("outside to in" + str(new_roads_i))
-
-    S0 = master.copy()
-    new_roads_i = build_all_roads(S0, master, alpha=2, wholepath=True,
-                                  barriers=False, plot_intermediate=True,
-                                  strict_greedy=True, vquiet=True,
-                                  outsidein=False)
-
-    S0.plot_roads()
-    print("inside out" + str(new_roads_i))

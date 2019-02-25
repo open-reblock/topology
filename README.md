@@ -1,3 +1,9 @@
+# to run:
+set up venv
+
+install: `pip install -e .`
+
+
 This is structured into three files:
 
 
