@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from .topology import my_graph_helpers as mgh
+from graph import my_graph_helpers as mgh
 
 """
 This example file demonstrates how to import a shapefile, finding and
