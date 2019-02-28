@@ -6,11 +6,17 @@ virtualenv venv
 source venv/bin/activate
 ```
 2. Install the requirements.
-```pip install -r requirements.txt```
+```
+pip install -r requirements.txt
+```
 3. From the top-level directory, install `topology` in editable mode.
-```pip install -e .```
-4. Deactivate your virtual environment
-```deactivate```
+```
+pip install -e .
+```
+4. Deactivate your virtual environment once you're done
+```
+deactivate
+```
 ----
 This is structured into three files:
 
