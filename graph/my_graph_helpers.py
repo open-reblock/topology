@@ -858,7 +858,7 @@ def graphFromJSON(jsonobj):
 
 
 def import_and_setup(filename, threshold=1, component=None,
-                     rezero=np.array([0, 0]), byblock=True, name=""):
+                     rezero=np.array([0, 0]), byblock=True, name="", logger=None):
 
     """ threshold defines the minimum distance (in map units) between two nodes
     before they are combined into a single node during the clean up phase. This
@@ -878,8 +878,9 @@ def import_and_setup(filename, threshold=1, component=None,
     # check that rezero is an array of len(2)
     # check that threshold is a float
 
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
+    if not logger:
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger()
 
     sf = shapefile.Reader(filename)
     myG1 = graphFromShapes(sf.shapes(), name, rezero)
