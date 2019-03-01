@@ -36,7 +36,8 @@ def distance(mynode0, mynode1):
 
 
 def distance_squared(mynode0, mynode1):
-    return (mynode0.x-mynode1.x)**2+(mynode0.y-mynode1.y)**2
+    # https://stackoverflow.com/a/47775357
+    return np.sum((a - b)**2 for (a, b) in zip(mynode0.loc, mynode1.loc))
 
 
 def sq_distance_point_to_segment(target, myedge):
@@ -168,32 +169,8 @@ def WeightedPick(d):
     """picks an item out of the dictionary d, with probability proportional to
     the value of that item.  e.g. in {a:1, b:0.6, c:0.4} selects and returns
     "a" 5/10 times, "b" 3/10 times and "c" 2/10 times. """
-
-    r = random.uniform(0, sum(d.values()))
-    s = 0.0
-    for k, w in d.items():
-        s += w
-        if r < s:
-            return k
-    return k
-
-
-def mat_reorder(matrix, order):
-    """sorts a square matrix so both rows and columns are
-    ordered by order. """
-
-    Drow = [matrix[i] for i in order]
-    Dcol = [[r[i] for i in order] for r in Drow]
-
-    return Dcol
-
-
-def myRoll(mylist):
-    """rolls a list, putting the last element into the first slot. """
-
-    mylist.insert(0, mylist[-1])
-    del mylist[-1]
-    return(mylist)
+    sum_p = sum(d.values())
+    return np.random.choice(d.keys(), p=[p/sum_p for p in d.values()])
 
 ######################
 # DUALS HElPER
