@@ -36,8 +36,7 @@ def distance(mynode0, mynode1):
 
 
 def distance_squared(mynode0, mynode1):
-    # https://stackoverflow.com/a/47775357
-    return np.sum((a - b)**2 for (a, b) in zip(mynode0.loc, mynode1.loc))
+    return (mynode0.x-mynode1.x)**2+(mynode0.y-mynode1.y)**2
 
 
 def sq_distance_point_to_segment(target, myedge):
@@ -445,6 +444,7 @@ def choose_path(myG, paths, alpha, strict_greedy=False):
 
     if strict_greedy is False:
         inv_weight = dict((k, 1.0/(paths[k]**alpha)) for k in paths)
+        print inv_weight
         target_path = WeightedPick(inv_weight)
     if strict_greedy is True:
         target_path = min(paths, key=paths.get)
