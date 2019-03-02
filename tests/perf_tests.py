@@ -27,7 +27,7 @@ def main(names):
         blocks = test_case("data/" + name, name)
         time_taken = timeit.timeit('test_case("data/" + name, name)', 
             setup='from __main__ import test_case; name = "%s"' % name, 
-            number=3)
+            number=10)
         print blocks, time_taken, blocks/time_taken
 
 if __name__ == '__main__':
