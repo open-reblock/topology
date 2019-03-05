@@ -4,6 +4,7 @@ import subprocess
 from graph import my_graph as mg
 from graph import my_graph_helpers as mgh
 
+NUMBER_RUNS       = 10
 DEFAULT_THRESHOLD = 1
 DEFAULT_BLOCKING  = True
 
@@ -25,19 +26,21 @@ def main(names):
     for name in names:
         print git_hash, name,
         blocks = test_case("data/" + name, name)
-        time_taken = timeit.timeit('test_case("data/" + name, name)', 
+        time_taken = min(timeit.repeat(
+            'test_case("data/" + name, name)', 
             setup='from __main__ import test_case; name = "%s"' % name, 
-            number=10)
+            repeat=NUMBER_RUNS,
+            number=1))
         print blocks, time_taken, blocks/time_taken
 
 if __name__ == '__main__':
     names = [
         'Phule_Nagar_v6',
-        'CapeTown',
         'Epworth_Before',
         'Epworth_demo',
         'Las_Vegas',
         'NYC',
-        'Prague'
+        'Prague',
+        'CapeTown'
     ]
     main(names)
