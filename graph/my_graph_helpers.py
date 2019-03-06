@@ -168,32 +168,8 @@ def WeightedPick(d):
     """picks an item out of the dictionary d, with probability proportional to
     the value of that item.  e.g. in {a:1, b:0.6, c:0.4} selects and returns
     "a" 5/10 times, "b" 3/10 times and "c" 2/10 times. """
-
-    r = random.uniform(0, sum(d.values()))
-    s = 0.0
-    for k, w in d.items():
-        s += w
-        if r < s:
-            return k
-    return k
-
-
-def mat_reorder(matrix, order):
-    """sorts a square matrix so both rows and columns are
-    ordered by order. """
-
-    Drow = [matrix[i] for i in order]
-    Dcol = [[r[i] for i in order] for r in Drow]
-
-    return Dcol
-
-
-def myRoll(mylist):
-    """rolls a list, putting the last element into the first slot. """
-
-    mylist.insert(0, mylist[-1])
-    del mylist[-1]
-    return(mylist)
+    sum_p = sum(d.values())
+    return np.random.choice(d.keys(), p=[p/sum_p for p in d.values()])
 
 ######################
 # DUALS HElPER
@@ -467,8 +443,7 @@ def choose_path(myG, paths, alpha, strict_greedy=False):
     length more frequently  """
 
     if strict_greedy is False:
-        inv_weight = dict((k, 1.0/(paths[k]**alpha)) for k in paths)
-        target_path = WeightedPick(inv_weight)
+        target_path = WeightedPick({path: length**-alpha for (path, length) in paths.items()})
     if strict_greedy is True:
         target_path = min(paths, key=paths.get)
 

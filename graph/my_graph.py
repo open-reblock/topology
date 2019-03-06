@@ -5,7 +5,7 @@ import math
 import warnings
 import json
 import my_graph_helpers as mgh
-from lazy_property import lazy_property
+from utils.lazy_property import lazy_property
 from matplotlib import pyplot as plt
 
 
