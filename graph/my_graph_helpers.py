@@ -443,9 +443,7 @@ def choose_path(myG, paths, alpha, strict_greedy=False):
     length more frequently  """
 
     if strict_greedy is False:
-        inv_weight = dict((k, 1.0/(paths[k]**alpha)) for k in paths)
-        print inv_weight
-        target_path = WeightedPick(inv_weight)
+        target_path = WeightedPick({path: length**-alpha for (path, length) in paths.items()})
     if strict_greedy is True:
         target_path = min(paths, key=paths.get)
 
